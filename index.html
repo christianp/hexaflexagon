@@ -16,7 +16,7 @@
             </section>
             <section id="confirm-photo" :class="{show:mode=='confirm-photo'}">
                 <p>Is this photo OK?</p>
-                <div id="result-container"><img v-if="data_uri" :src="data_uri"></div>
+                <div id="result-container" style="width: 480px; height: 480px;"><img v-if="data_uri" :src="data_uri"></div>
                 <button type="button" @click="retake">Retake</button>
                 <button type="button" @click="confirm_photo">Use this photo</button>
             </section>
