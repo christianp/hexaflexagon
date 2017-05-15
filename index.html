@@ -3,15 +3,29 @@
     <head>
         <script src="webcam.js"></script>
         <script src="vue.js"></script>
+        <link rel="stylesheet" href="style.css"></link>
     </head>
     <body>
-        <div id="my_camera" style="width:320px; height:240px;"></div>
-        <button type="button" id="take-snapshot">Take Snapshot</button>
-        <div id="my_result"></div>
+        <div id="app" :data-mode="[mode]">
+            <section id="take-photo" :class="{show:mode=='take-photo'}">
+                <p class="help-text">Take a photo of yourself. Make sure you fit inside the hexagon!</p>
+                <div id="camera-container" @click="take_snapshot">
+                    <div id="camera" style="width:640px; height:480px;"></div>
+                </div>
+                <p class="help-text">Tap the photo when you're ready</p>
+            </section>
+            <section id="confirm-photo" :class="{show:mode=='confirm-photo'}">
+                <p>Is this photo OK?</p>
+                <div id="result-container"><img v-if="data_uri" :src="data_uri"></div>
+                <button type="button" @click="retake">Retake</button>
+                <button type="button" @click="confirm_photo">Use this photo</button>
+            </section>
 
-
-        <p>Drag an image onto this page to 
-        <div id="svg-container">Loading...</div>
+            <section id="show-hexaflexagon" :class="{show:mode=='show-hexaflexagon'}">
+                <div id="svg-container">Loading...</div>
+                <button type="button" @click="retake">Start again</button>
+            </section>
+        </div>
         <script src="thing.js"></script>
     </body>
 </html>
