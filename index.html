@@ -1,6 +1,9 @@
 <!doctype html>
 <html>
     <head>
+        <meta name="viewport" content="width=device-width,initial-scale=1.0">
+        <meta charset="utf-8">
+        <title>Hexaflex yourself</title>
         <script src="webcam.js"></script>
         <script src="vue.js"></script>
         <script src="blobstream.js"></script>
@@ -13,21 +16,26 @@
             <section id="take-photo" :class="{show:mode=='take-photo'}">
                 <p class="help-text">Take a photo of yourself. Make sure you fit inside the hexagon!</p>
                 <div id="camera-container" @click="take_snapshot">
-                    <div id="camera" style="width:640px; height:480px;"></div>
+                    <div id="camera"></div>
+                    <div id="overlay"v-hexagon></div>
                 </div>
                 <p class="help-text">Tap the photo when you're ready</p>
             </section>
             <section id="confirm-photo" :class="{show:mode=='confirm-photo'}">
                 <p>Is this photo OK?</p>
                 <div id="result-container" style="width: 480px; height: 480px;" v-hexagon><img v-if="data_uri!==null" :src="data_uri"></div>
-                <button type="button" @click="retake">Retake</button>
-                <button type="button" @click="confirm_photo">Use this photo</button>
+                <nav>
+                    <button type="button" @click="retake">↻ Try again</button>
+                    <button class="primary" type="button" @click="confirm_photo">✓ Use this photo</button>
+                </nav>
             </section>
 
             <section id="show-hexaflexagon" :class="{show:mode=='show-hexaflexagon'}">
                 <div id="svg-container">Loading...</div>
-                <button type="button" @click="retake">Start again</button>
-                <a v-if="download_url!==null" :href="download_url">Download</a>
+                <nav>
+                    <button type="button" @click="retake">↻ Start again</button>
+                    <a class="primary" v-if="download_url!==null" :href="download_url" target="hexaflexagon-pdf">⇣ Download</a>
+                </nav>
             </section>
         </div>
         <script src="thing.js"></script>
