@@ -1,10 +1,22 @@
+Vue.directive('hexagon',{
+    componentUpdated: function(el) {
+        let rect = el.getBoundingClientRect();
+        var width = rect.width;
+        var height = rect.height;
+        var r = height/2;
+        var h = Math.sqrt(3)*r/2;
+        var x1 = width/2-h;
+        var x2 = width/2;
+        var x3 = width/2+h;
+        var y1 = 2*r;
+        var y2 = 3*r/2;
+        var y3 = r/2;
+        var y4 = 0;
+        var clip_path = 'polygon('+x1+'px '+y2+'px, '+x2+'px '+y1+'px, '+x3+'px '+y2+'px, '+x3+'px '+y3+'px, '+x2+'px '+y4+'px, '+x1+'px '+y3+'px)';
+        el.style.clipPath = clip_path;
+    }
+});
 
-function Thinger(source) {
-    var thinger = this;
-
-}
-Thinger.prototype = {
-}
 
 'drag dragstart dragend dragover dragenter dragleave drop'.split(' ').forEach(function(ev) {
     document.body.addEventListener(ev,function(e) {
@@ -17,13 +29,13 @@ var app;
 fetch('trihexaflexagon-template.svg').then(function(r) {return r.text();}).then(function(source) {
 
 var svg = source.replace(/\s*\n\s*/mg,' ').replace(/^.*<svg/,'<svg');
-console.log(svg.slice(0,500));
 document.getElementById('svg-container').innerHTML = svg;
 
 app = new Vue({
     el: '#app',
     data: {
         data_uri: null,
+        download_url: null,
         mode: 'take-photo',
         name: ''
     },
@@ -44,47 +56,56 @@ app = new Vue({
         },
 
         set_clip_path: function() {
-            let result_container = document.querySelector('#result-container');
-            let rect = result_container.getBoundingClientRect();
-            var width = rect.width;
-            var height = rect.height;
-            var r = height/2;
-            var h = Math.sqrt(3)*r/2;
-            var x1 = width/2-h;
-            var x2 = width/2;
-            var x3 = width/2+h;
-            var y1 = 2*r;
-            var y2 = 3*r/2;
-            var y3 = r/2;
-            var y4 = 0;
-            var clip_path = 'polygon('+x1+'px '+y2+'px, '+x2+'px '+y1+'px, '+x3+'px '+y2+'px, '+x3+'px '+y3+'px, '+x2+'px '+y4+'px, '+x1+'px '+y3+'px)';
-            document.getElementById('result-container').style.clipPath = clip_path;
-
             document.body.addEventListener('drop',function(e) {
                 var files = e.dataTransfer.files;
                 var f = files[0];
                 var reader = new FileReader();
                 reader.onload = function(e) {
                     app.data_uri = e.target.result;
+                    app.mode = 'show-hexaflexagon';
                 }
                 reader.readAsDataURL(f);
             });
 
+        },
+        create_download: function() {
+            var app = this;
+
+            if(this.mode!=='show-hexaflexagon') {
+                return null;
+            }
+
+            var doc = new PDFDocument({compress:false,layout:'landscape',size: 'A4'});
+            SVGtoPDF(doc,document.querySelector('#svg-container svg'),0,0,{useCSS:true});
+            var stream = doc.pipe(blobStream());
+            console.log('doc');
+            window.doc = doc;
+            stream.on('finish',function() {
+                console.log('finish');
+                var blob = stream.toBlob('application/pdf');
+                window.blob = blob;
+                app.download_url = URL.createObjectURL(blob);
+            });
+            doc.end();
         }
     },
     watch: {
         data_uri: function() {
             var app = this;
-            console.log('data');
             [1,2,3,4,5,6].forEach(function(i) {
-                var segment = document.querySelector('svg #segment-'+i);
+                var segment = document.querySelector('#svg-container svg #segment-'+i);
                 segment.setAttributeNS('http://www.w3.org/1999/xlink','xlink:href',app.data_uri);
             });
             this.set_clip_path();
         },
         name: function() {
-            var name = document.querySelector('svg #name tspan tspan');
+            var name = document.querySelector('#svg-container svg #name tspan tspan');
             name.innerHTML = app.name;
+        },
+        mode: function() {
+            if(this.mode=='show-hexaflexagon') {
+                this.create_download();
+            }
         }
     },
     mounted: function() {

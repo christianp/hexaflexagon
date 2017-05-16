@@ -3,6 +3,9 @@
     <head>
         <script src="webcam.js"></script>
         <script src="vue.js"></script>
+        <script src="blobstream.js"></script>
+        <script src="pdfkit.js"></script>
+        <script src="svg-pdfkit.js"></script>
         <link rel="stylesheet" href="style.css"></link>
     </head>
     <body>
@@ -16,7 +19,7 @@
             </section>
             <section id="confirm-photo" :class="{show:mode=='confirm-photo'}">
                 <p>Is this photo OK?</p>
-                <div id="result-container" style="width: 480px; height: 480px;"><img v-if="data_uri" :src="data_uri"></div>
+                <div id="result-container" style="width: 480px; height: 480px;" v-hexagon><img v-if="data_uri!==null" :src="data_uri"></div>
                 <button type="button" @click="retake">Retake</button>
                 <button type="button" @click="confirm_photo">Use this photo</button>
             </section>
@@ -24,6 +27,7 @@
             <section id="show-hexaflexagon" :class="{show:mode=='show-hexaflexagon'}">
                 <div id="svg-container">Loading...</div>
                 <button type="button" @click="retake">Start again</button>
+                <a v-if="download_url!==null" :href="download_url">Download</a>
             </section>
         </div>
         <script src="thing.js"></script>
