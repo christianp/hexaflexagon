@@ -14,16 +14,19 @@
     <body>
         <div id="app" :data-mode="[mode]">
             <section id="take-photo" :class="{show:mode=='take-photo'}">
-                <p class="help-text">Take a photo of yourself. Make sure you fit inside the hexagon!</p>
                 <div id="camera-container" @click="take_snapshot">
                     <div id="camera"></div>
                     <div id="overlay"v-hexagon></div>
                 </div>
-                <p class="help-text">Tap the photo when you're ready</p>
+                <p class="help-text">Make a hexaflexagon with a photo of yourself!</p>
+                <p class="help-text">First, take a photo of yourself. Make sure you fit inside the hexagon!</p>
+                <nav>
+                    <button class="primary" type="button" @click="take_snapshot">Tap here to take a snapshot</button>
+                </nav>
             </section>
             <section id="confirm-photo" :class="{show:mode=='confirm-photo'}">
-                <p>Is this photo OK?</p>
                 <div id="result-container" style="width: 480px; height: 480px;" v-hexagon><img v-if="data_uri!==null" :src="data_uri"></div>
+                <p>Is this photo OK?</p>
                 <nav>
                     <button type="button" @click="retake">↻ Try again</button>
                     <button class="primary" type="button" @click="confirm_photo">✓ Use this photo</button>
