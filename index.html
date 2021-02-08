@@ -13,6 +13,11 @@
     </head>
     <body>
         <div id="app" :data-mode="[mode]">
+            <section id="upload-photo" :class="{show:mode=='upload-photo'}">
+                <p class="help-text">Make a hexaflexagon with a photo of yourself!</p>
+                <p class="help-text">First, upload a photo.</p>
+                <input type="file" @change="upload_photo">
+            </section>
             <section id="take-photo" :class="{show:mode=='take-photo'}">
                 <div id="camera-container" @click="take_snapshot">
                     <div id="camera"></div>

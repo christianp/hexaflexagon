@@ -39,7 +39,8 @@ app = new Vue({
         data_uri: null,
         download_url: null,
         mode: 'take-photo',
-        name: ''
+        name: '',
+        use_webcam: true
     },
     methods: {
         take_snapshot: function() {
@@ -51,7 +52,7 @@ app = new Vue({
         },
         retake: function() {
             this.data_uri = null;
-            this.mode = 'take-photo';
+            this.mode = this.use_webcam ? 'take-photo' : 'upload-photo';
         },
         confirm_photo: function() {
             this.mode = 'show-hexaflexagon';
@@ -76,6 +77,19 @@ app = new Vue({
                 app.download_url = URL.createObjectURL(blob);
             });
             doc.end();
+        },
+
+        upload_photo: function(e) {
+            this.load_file(e.target.files[0]);
+        },
+
+        load_file: function(f) {
+            var reader = new FileReader();
+            reader.onload = e => {
+                this.data_uri = e.target.result;
+                this.mode = 'show-hexaflexagon';
+            }
+            reader.readAsDataURL(f);
         }
     },
     watch: {
@@ -106,17 +120,16 @@ app = new Vue({
             crop_width: 480,
             crop_height: 480
         });
+        Webcam.on('error',function(e) {
+            console.error(e);
+            app.use_webcam = false;
+            app.mode = 'upload-photo';
+        });
         Webcam.attach( '#camera' );
 
         document.body.addEventListener('drop',function(e) {
             var files = e.dataTransfer.files;
-            var f = files[0];
-            var reader = new FileReader();
-            reader.onload = function(e) {
-                app.data_uri = e.target.result;
-                app.mode = 'show-hexaflexagon';
-            }
-            reader.readAsDataURL(f);
+            app.load_file(files[0]);
         });
     }
 });
