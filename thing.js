@@ -255,8 +255,7 @@ class HexaflexagonApp {
         document.getElementById(`image-${i}-preview`).src = data;
         const image = document.getElementById(`image-${i}`);
         set_href(image, data);
-        console.log('replace image');
-        //this.create_download();
+        this.create_download();
     }
 
     create_download() {
