@@ -1,27 +1,129 @@
-html {
-    font-size: 13px;
-    font-family: sans-serif;
+:root {
+    --animation-time: 0.5s;
 }
-@media screen and (min-width:720px) {
-    html {
-        font-size: 20px;
+
+@media (prefers-reduced-motion: true) {
+    :root {
+        --animation-time: 0s;
     }
 }
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    font-size: clamp(13px,3vw,20px);
+    font-family: sans-serif;
+}
 body {
-    padding: 0;
+    padding: 1em;
     margin: 0;
+    display: grid;
+    grid-template-rows: auto 1fr;
+    height: 100vh;
+}
+main {
+    overflow: auto;
 }
 
-p {
-    margin-left: 1rem;
-    margin-right: 1rem;
+button {
+    font-size: 1em;
 }
 
-section:not(.show) {display:none;}
+#template-screen {
+  display: grid;
+  grid-gap: 1em;
+  grid-template: 
+      "previews" auto "template" 1fr "links" 2em / 1fr;
+  height: 100%;
+}
+
+#image-previews {
+    grid-area: previews;
+    display: flex;
+    gap: 1em;
+    justify-content: center;
+    align-items: start;
+    flex-wrap: wrap;
+}
+#image-previews > .image-container {
+  display: grid;
+  grid-template: 
+      "pic" 1fr
+      "camera" auto
+      "upload" auto
+  ;
+  padding: 1em;
+  grid-gap: 0.5em;
+  transition: filter var(--animation-time);
+  flex-basis: 30%;
+}
+#image-previews svg {
+  width: 100%;
+  max-height: 100%;
+  grid-area: pic;
+}
+
+#image-previews > .image-container.dragging > svg {
+    filter: brightness(2) blur(0.3em);
+}
+
+
+@media screen and (orientation: landscape) {
+    #template-screen {
+        grid-template-rows: 1fr;
+        grid-template: 
+            "previews template" 1fr "links links" 2em / 20em 1fr; 
+    }
+    #image-previews {
+        overflow: auto;
+        display: grid;
+        grid-gap: 1em;
+    }
+    #image-previews .image-container {
+        grid-template:
+            "pic camera" 1fr
+            "pic upload" 1fr
+            / 1fr 1fr;
+    }
+    #image-previews svg {
+        width: auto;
+        max-width: 100%;
+        height: 100%;
+        max-height: none;
+    }    
+}
+
+
+.hexagon {
+    object-fit: cover;
+    clip-path: polygon(
+        calc(50% + 50% * cos(0deg)) calc(50% + 50% * sin(0deg)), 
+        calc(50% + 50% * cos(60deg)) calc(50% + 50% * sin(60deg)), 
+        calc(50% + 50% * cos(120deg)) calc(50% + 50% * sin(120deg)), 
+        calc(50% + 50% * cos(180deg)) calc(50% + 50% * sin(180deg)), 
+        calc(50% + 50% * cos(240deg)) calc(50% + 50% * sin(240deg)), 
+        calc(50% + 50% * cos(300deg)) calc(50% + 50% * sin(300deg))
+    );
+}
+#camera, #photo {
+    width: min(80vmin,480px);
+    height: min(80vmin,480px);
+    max-width: 100%;
+    margin: auto auto;
+    display: block;
+}
+#photo {
+    display: none;
+}
+
+section:not(.show) {
+    display: none !important;
+}
 
 section {
     margin: 0 auto;
-    max-width: 640px;
     width: 100%;
 }
 
@@ -29,7 +131,6 @@ section {
     position: relative;
     display: block;
     margin: 0 auto;
-    width: 480px;
 }
 #camera video {
     margin-left: 0px;
@@ -59,30 +160,39 @@ section {
     height: auto;
 }
 
-nav {
-    margin-top: 1rem;
-    display:flex;
+#template {
+  height: 100%;
+  width: 100%;
+  grid-area: template;
 }
-nav > * {
-    flex: 1;
-    background: #eee;
-    border: none;
-    font-size: 1.3rem;
-    padding: 1rem;
-    text-align: center;
-    cursor: pointer;
+#links {
+    grid-area: links;
+    display: flex;
+    gap: 1em;
+    justify-content: space-between;
+    align-items             : center;
 }
-nav > *~* {
-    margin-left: 1rem;
+#links p {
+    margin: 0;
 }
-nav > :not(:last-child) {
-    margin-right: 1rem;
-}
-nav > a {
-    text-decoration: none;
-    color: inherit;
-}
-nav > .primary {
-    color: hsl(240,100%,40%);
-    background: hsl(240,60%,90%)
+
+@media print {
+    header, #image-previews, #links {
+        display: none;
+    }
+    
+    body {
+        margin: 0;
+        padding: 0;
+    }
+    
+    #template-screen {
+        grid-template-rows: 1fr;
+        width: 100vw;
+        height: 100vh;
+        align-content: center;
+        justify-content: center;
+        padding: 0;
+        grid-template-columns: 1fr;
+    }
 }

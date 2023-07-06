@@ -4,48 +4,54 @@
         <meta name="viewport" content="width=device-width,initial-scale=1.0">
         <meta charset="utf-8">
         <title>Hexaflex yourself</title>
-        <script src="webcam.js"></script>
-        <script src="vue.js"></script>
+
         <script src="blobstream.js"></script>
         <script src="pdfkit.js"></script>
         <script src="svg-pdfkit.js"></script>
-        <link rel="stylesheet" href="style.css"></link>
+
+        <link rel="stylesheet" href="style.css?1"></link>
+        <script src="thing.js?1" type="module"></script>
     </head>
     <body>
-        <div id="app" :data-mode="[mode]">
-            <section id="upload-photo" :class="{show:mode=='upload-photo'}">
-                <p class="help-text">Make a hexaflexagon with a photo of yourself!</p>
-                <p class="help-text">First, upload a photo.</p>
-                <input type="file" @change="upload_photo">
-            </section>
-            <section id="take-photo" :class="{show:mode=='take-photo'}">
-                <div id="camera-container" @click="take_snapshot">
-                    <div id="camera"></div>
-                    <div id="overlay"v-hexagon></div>
+        <header>
+            <h1>Hexaflex yourself</h1>
+            <p>Fill in the three hexagonal faces by taking photos or uploading pictures.</p>
+        </header>
+        <main id="app">
+            <section id="template-screen" data-mode="template">
+                <div id="image-previews">
                 </div>
-                <p class="help-text">Make a hexaflexagon with a photo of yourself!</p>
-                <p class="help-text">First, take a photo of yourself. Make sure you fit inside the hexagon!</p>
+                <svg id="template" viewBox="0 0 297 210">
+                    <g id="text">
+                    <text x="146.5" y="30" text-anchor="middle" font-size="16">A hexaflexagon made just for you</text>
+                    <text x="10" y="140" font-size="10">1. Cut the shape out.</text>
+                    <text x="10" y="155" font-size="10">2. Fold along the middle.</text>
+                    <text x="10" y="170" font-size="10">3. Fold in groups of three triangles to make a hexagon.</text>
+                    <text x="10" y="185" font-size="10">4. Stick the last triangle on top of the first.</text>
+                    <a href="https://somethingorotherwhatever.com" id="template-link"><text x="146.5" y="200" text-anchor="middle" font-size="8">https://somethingorotherwhatever.com</text></a>
+                    </g>
+                </svg>
+                <div id="links">
+                    <a download="hexaflexagon.pdf" class="primary" id="download">⇣ Download this </a>
+                    <button id="print" type="button">Print this</button>
+                    <p>Made by <a href="https://somethingorotherwhatever.com">clp</a></p>
+                </div>
+            </section>
+            <section data-mode="take-photo">
+                <div id="camera-container">
+                    <video id="camera" class="hexagon"></video>
+                    <canvas id="photo"></canvas>
+                </div>
+                <p class="help-text">Take a photo of yourself. Make sure you fit inside the hexagon!</p>
                 <nav>
-                    <button class="primary" type="button" @click="take_snapshot">Tap here to take a snapshot</button>
+                    <button class="primary" type="button" id="take-snapshot">Tap here to take a snapshot</button>
                 </nav>
             </section>
-            <section id="confirm-photo" :class="{show:mode=='confirm-photo'}">
-                <div id="result-container" style="width: 480px; height: 480px;" v-hexagon><img v-if="data_uri!==null" :src="data_uri"></div>
-                <p>Is this photo OK?</p>
-                <nav>
-                    <button type="button" @click="retake">↻ Try again</button>
-                    <button class="primary" type="button" @click="confirm_photo">✓ Use this photo</button>
-                </nav>
+            <section data-mode="no-camera">
+                <h2>Whoops!</h2>
+                <p>You either don't have a camera, or you didn't give this page permission to use it.</p>
+                <button type="button" id="back-to-template">Back to the template</button>
             </section>
-
-            <section id="show-hexaflexagon" :class="{show:mode=='show-hexaflexagon'}">
-                <div id="svg-container">Loading...</div>
-                <nav>
-                    <button type="button" @click="retake">↻ Start again</button>
-                    <a class="primary" v-if="download_url!==null" :href="download_url" target="hexaflexagon-pdf">⇣ Download</a>
-                </nav>
-            </section>
-        </div>
-        <script src="thing.js"></script>
+        </main>
     </body>
 </html>
