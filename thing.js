@@ -15,7 +15,7 @@ function element(name,attrs) {
     return e;
 }
 function set_href(el,href) {
-    el.setAttributeNS('http://www.w3.org/1999/xlink','xlink:href',href);
+    el.setAttributeNS('http://www.w3.org/1999/xlink','href',href);
 }
 
 class HexaflexagonApp {
@@ -255,6 +255,10 @@ class HexaflexagonApp {
         document.getElementById(`image-${i}-preview`).src = data;
         const image = document.getElementById(`image-${i}`);
         set_href(image, data);
+
+        // Workaround for a Safari bug, seen in v16.5: it doesn't redraw hrefs unless you set the attribute again.
+        Array.from(document.querySelectorAll('use')).forEach(u=>u.setAttribute('href',u.getAttribute('href')))
+
         this.create_download();
     }
 
